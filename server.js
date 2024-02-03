@@ -1,22 +1,24 @@
-var express = require('express');
+var express = require('express')
+var bodyParser = require('body-parser')
+
 var app = express()
-var bodyParser = require('body-parser');
-
-app.use(bodyParser.text({ type: '*/*' }));
-
-app.post('/', function(req, res){
-
-    var body = req.body
-
-    if (req.get('Content-Type')) {
-        console.log(req.get('Content-Type'));
-        res = res.type(req.get('Content-Type'));
+app.use(bodyParser.text({
+    type: function(req) {
+        return 'text';
     }
-    res.send (body)
-});
+}));
 
-app.listen(process.env.PORT || 8008, function() {
-    console.log('Listening on port %d', this.address().port);
-});
+app.post('/', (req, res)=> {
+    console.log(req.body)
+    res = res.status(200)
+    var contentType = req.get('Content-Type');
+    if (contentType) {
+        console.log("Content type:" + contentType);
+        res = res.type(contentType)
+    }
+    res.send(req.body)
+})
+
+app.listen(process.env.PORT || 8080);
 
 module.exports = app
